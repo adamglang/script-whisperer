@@ -1,16 +1,37 @@
-export async function onRequestPost(context) {
+export async function handleRequest(request) {
     try {
-      const body = await context.request.json();
-      const prompt = body.prompt || "No prompt";
+      const { input: prompt } = await request.json();
   
-      // Here’s where your logic goes (this is a placeholder)
-      const result = `You whispered: ${prompt}`;
+      if (!prompt || prompt.trim() === "") {
+        return new Response(
+          JSON.stringify({ result: "You whispered: No prompt" }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
   
-      return new Response(JSON.stringify({ result }), {
-        headers: { 'Content-Type': 'application/json' }
+      const whisper = `You whispered: ${prompt}`;
+  
+      return new Response(JSON.stringify({ result: whisper }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-    } catch (err) {
-      return new Response("Invalid request", { status: 400 });
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ error: "Invalid request format" }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
   }
   
