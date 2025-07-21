@@ -18,16 +18,20 @@
   <div id="output"></div>
 
   <script>
-    async function generate() {
-      const input = document.getElementById("input").value;
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input })
+    document.getElementById('whisperBtn').addEventListener('click', async () => {
+      const promptText = document.getElementById('prompt').value.trim();
+  
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: promptText })
       });
-      const result = await response.json();
-      document.getElementById("output").innerText = result.output || result.error;
-    }
+  
+      const data = await response.json();
+      document.getElementById('output').textContent = data.result || '[No response]';
+    });
   </script>
 </body>
 </html>
