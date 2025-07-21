@@ -14,19 +14,33 @@
   <pre id="result"></pre>
 
   <script>
-    document.getElementById("generateButton").addEventListener("click", async () => {
-      const input = document.getElementById("promptInput").value;
+    window.addEventListener("DOMContentLoaded", () => {
+      const inputEl = document.getElementById("promptInput");
+      const resultEl = document.getElementById("result");
+      const buttonEl = document.getElementById("generateButton");
 
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ input }),
+      buttonEl.addEventListener("click", async () => {
+        const input = inputEl.value;
+        if (!input) {
+          resultEl.innerText = "Please enter something to whisper.";
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ input }),
+          });
+
+          const result = await response.json();
+          resultEl.innerText = result.result || "No response.";
+        } catch (err) {
+          resultEl.innerText = "Error: " + err.message;
+        }
       });
-
-      const result = await response.json();
-      document.getElementById("result").innerText = result.result || "No result";
     });
   </script>
 </body>
